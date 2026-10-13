@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Reports | BrandShield{% endblock %}
+{% block content %}
+<section class="page-heading">
+    <p class="eyebrow">CASE MANAGEMENT</p>
+    <h1>Monitoring Reports</h1>
+    <p>Review saved findings and track what action has been taken.</p>
+</section>
+
+<section class="panel">
+    {% if results %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Brand</th><th>Scope</th><th>Candidate</th>
+                    <th>Risk</th><th>Score</th><th>Reason</th>
+                    <th>Recommended action</th><th>Status</th><th>Update</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in results %}
+                <tr>
+                    <td>{{ item.brand_name }}</td>
+                    <td>{{ item.scan_type }}</td>
+                    <td>
+                        {{ item.candidate_name }}
+                        {% if item.candidate_url %}
+                        <br><small>{{ item.candidate_url }}</small>
+                        {% endif %}
+                    </td>
+                    <td><span class="risk {{ item.risk_level|lower }}">{{ item.risk_level }}</span></td>
+                    <td>{{ item.similarity_score }}%</td>
+                    <td>{{ item.reason }}</td>
+                    <td>{{ item.recommended_action }}</td>
+                    <td>{{ item.status }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('update_result', result_id=item.id) }}">
+                            <select name="status" aria-label="Report status">
+                                {% for status in ["Open", "Under Review", "Resolved", "False Positive"] %}
+                                <option value="{{ status }}" {% if item.status == status %}selected{% endif %}>{{ status }}</option>
+                                {% endfor %}
+                            </select>
+                            <button class="button small" type="submit">Save</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">No reports yet. Run a monitoring check to create your first report.</div>
+    {% endif %}
+</section>
+{% endblock %}

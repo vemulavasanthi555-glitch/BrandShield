@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | BrandShield{% endblock %}
+{% block content %}
+<section class="hero">
+    <div>
+        <p class="eyebrow">BRAND PROTECTION WORKSPACE</p>
+        <h1>Protect your brand online.</h1>
+        <p>Register your brand, assess suspicious listings, and manage investigation results from one place.</p>
+        <a class="button" href="{{ url_for('brand_profile') }}">Register a Brand</a>
+        <a class="button secondary" href="{{ url_for('scan') }}">Open Risk Scanner</a>
+    </div>
+    <div class="hero-icon">🛡️</div>
+</section>
+
+<div class="stats-grid">
+    <article class="stat-card"><span>Registered Brands</span><strong>{{ stats.total_brands }}</strong></article>
+    <article class="stat-card"><span>Total Scan Results</span><strong>{{ stats.total_scans }}</strong></article>
+    <article class="stat-card"><span>High-Risk Flags</span><strong>{{ stats.high_risks }}</strong></article>
+    <article class="stat-card"><span>Open Cases</span><strong>{{ stats.open_cases }}</strong></article>
+</div>
+
+<section class="panel">
+    <div class="section-heading">
+        <div><p class="eyebrow">ACTIVITY</p><h2>Recent scan results</h2></div>
+        <a href="{{ url_for('reports') }}">View all reports →</a>
+    </div>
+
+    {% if recent_results %}
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Brand</th><th>Type</th><th>Candidate</th><th>Risk</th><th>Status</th></tr></thead>
+            <tbody>
+            {% for item in recent_results %}
+            <tr>
+                <td>{{ item.brand_name }}</td>
+                <td>{{ item.scan_type }}</td>
+                <td>{{ item.candidate_name }}</td>
+                <td><span class="risk {{ item.risk_level|lower }}">{{ item.risk_level }}</span></td>
+                <td>{{ item.status }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="empty-state">No scan results yet. Register a brand, then start your first scan.</div>
+    {% endif %}
+</section>
+{% endblock %}

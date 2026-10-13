@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Risk Scanner | BrandShield{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <p class="eyebrow">INVESTIGATION TOOLS</p>
+    <h1>Risk Scanner</h1>
+    <p>
+        Identify potential brand impersonation risks across
+        social media, websites, and mobile applications.
+    </p>
+</section>
+
+<section class="panel">
+    <h2>Monitoring Scopes</h2>
+    <p class="muted">
+        Choose a monitoring area to assess potential risks to your brand.
+    </p>
+
+    <div class="feature-grid">
+        <article class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h2>Social Media Monitoring</h2>
+            <p>
+                Assess suspicious usernames and potential
+                accounts impersonating your registered brand.
+            </p>
+            <a href="{{ url_for('social_monitoring') }}">
+                Open Social Monitoring →
+            </a>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">🌐</div>
+            <h2>Website Monitoring</h2>
+            <p>
+                Compare candidate website names with your
+                registered brand and assess similarity risks.
+            </p>
+            <a href="{{ url_for('website_monitoring') }}">
+                Open Website Monitoring →
+            </a>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">📦</div>
+            <h2>Mobile App Monitoring</h2>
+            <p>
+                Assess app names, developer details, listing
+                URLs, and optionally compare uploaded logos.
+            </p>
+            <a href="{{ url_for('app_monitoring') }}">
+                Open App Monitoring →
+            </a>
+        </article>
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Scanning Workflow</h2>
+
+    <ol class="workflow">
+        <li>Register your brand in Brand Profile.</li>
+        <li>Select your registered brand on a monitoring page.</li>
+        <li>Enter candidate details and run the assessment.</li>
+        <li>Review the similarity score, risk level, and reason.</li>
+        <li>Track findings and recommended actions in Reports.</li>
+    </ol>
+
+    {% if not brands %}
+        <p class="notice error">
+            No brand is registered yet. Please register a brand
+            before starting an assessment.
+        </p>
+    {% else %}
+        <p class="muted">
+            <strong>Registered brands:</strong>
+            {% for brand in brands %}
+                {{ brand.brand_name }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+</section>
+{% endblock %}

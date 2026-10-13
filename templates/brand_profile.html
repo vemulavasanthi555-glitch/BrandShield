@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Brand Profile | BrandShield{% endblock %}
+{% block content %}
+<section class="page-heading">
+    <p class="eyebrow">STEP 1</p>
+    <h1>Brand Profile</h1>
+    <p>Register the official brand identity before running monitoring checks.</p>
+</section>
+
+<section class="panel form-panel">
+    <form method="POST" enctype="multipart/form-data">
+        <label>Brand name *</label>
+        <input name="brand_name" placeholder="e.g. Meesho" required>
+
+        <label>Official username *</label>
+        <input name="official_username" placeholder="e.g. @officialbrand" required>
+
+        <label>Official website</label>
+        <input name="official_website" placeholder="https://example.com">
+
+        <label>Official social media usernames</label>
+        <textarea name="social_usernames" placeholder="Instagram: @brand&#10;Facebook: Brand Official&#10;X: @brand"></textarea>
+
+        <label>Official apps and store links</label>
+        <textarea name="official_apps" placeholder="Official app name and store links"></textarea>
+
+        <label>Other brand identifiers</label>
+        <textarea name="brand_identifiers" placeholder="Verified account links, trademark notes, known identifiers"></textarea>
+
+        <label>Brand logo (PNG, JPG, JPEG, WEBP; max 3 MB)</label>
+        <input type="file" name="logo" accept=".png,.jpg,.jpeg,.webp">
+
+        <button class="button" type="submit">Register Brand</button>
+    </form>
+</section>
+
+<section class="panel">
+    <h2>Registered brands</h2>
+    {% if brands %}
+    <div class="brand-list">
+        {% for brand in brands %}
+        <article class="brand-item">
+            {% if brand.logo_path %}
+            <img class="brand-thumb" src="{{ url_for('static', filename=brand.logo_path) }}" alt="Brand logo">
+            {% else %}
+            <div class="brand-thumb logo-placeholder">B</div>
+            {% endif %}
+            <div>
+                <h3>{{ brand.brand_name }}</h3>
+                <p>{{ brand.official_username }}</p>
+                {% if brand.official_website %}<p>{{ brand.official_website }}</p>{% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">No brands registered yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

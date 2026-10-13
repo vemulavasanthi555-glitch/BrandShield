@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Monitoring | BrandShield</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .app-monitoring {
+            max-width: 850px;
+            margin: 30px auto;
+            padding: 24px;
+        }
+
+        .monitor-card {
+            padding: 24px;
+            border-radius: 14px;
+            background: white;
+            box-shadow: 0 3px 15px rgba(0,0,0,.08);
+            margin-bottom: 22px;
+        }
+
+        .monitor-card label {
+            display: block;
+            margin: 16px 0 7px;
+            font-weight: 600;
+        }
+
+        .monitor-card input,
+        .monitor-card select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            box-sizing: border-box;
+        }
+
+        .monitor-card button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .logo-preview {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 5px;
+            background: #fff;
+        }
+
+        .logo-grid {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .logo-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .notice {
+            padding: 12px;
+            background: #f3f5f9;
+            border-radius: 8px;
+            margin-top: 14px;
+        }
+    </style>
+</head>
+<body>
+
+{% include 'base.html' %}
+
+<main class="app-monitoring">
+    <h1>Mobile App Monitoring</h1>
+    <p>
+        Review candidate mobile apps for possible brand impersonation.
+    </p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="notice">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <section class="monitor-card">
+        <h2>Check a Candidate App</h2>
+
+        <form method="POST"
+              action="{{ url_for('app_monitoring') }}"
+              enctype="multipart/form-data">
+
+            <label for="brand_id">Select Registered Brand</label>
+            <select name="brand_id" id="brand_id" required>
+                <option value="">-- Select Brand --</option>
+                {% for brand in brands %}
+                    <option value="{{ brand['id'] }}"
+                        {% if selected_brand and
+                           selected_brand['id'] == brand['id'] %}
+                            selected
+                        {% endif %}>
+                        {{ brand['brand_name'] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="candidate_app">Candidate App Name</label>
+            <input type="text"
+                   id="candidate_app"
+                   name="candidate_app"
+                   placeholder="Enter app name"
+                   required>
+
+            <label for="developer_name">Developer Name</label>
+            <input type="text"
+                   id="developer_name"
+                   name="developer_name"
+                   placeholder="Enter developer or publisher name">
+
+            <label for="listing_url">App Listing URL</label>
+            <input type="url"
+                   id="listing_url"
+                   name="listing_url"
+                   placeholder="https://example.com/app">
+
+            <label for="candidate_logo">Candidate App Logo</label>
+            <input type="file"
+                   id="candidate_logo"
+                   name="candidate_logo"
+                   accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp">
+
+            <p>Allowed formats: PNG, JPG, JPEG and WEBP. Maximum size: 3 MB.</p>
+
+            <button type="submit">Check App</button>
+        </form>
+    </section>
+
+    {% if result %}
+        <section class="monitor-card">
+            <h2>Monitoring Result</h2>
+
+            <p>
+                <strong>Candidate App:</strong>
+                {{ result.candidate_name }}
+            </p>
+
+            <p>
+                <strong>Developer:</strong>
+                {{ result.platform }}
+            </p>
+
+            <p>
+                <strong>Name Similarity:</strong>
+                {{ result.similarity_score }}%
+            </p>
+
+            <p>
+                <strong>Name-Based Risk:</strong>
+                {{ result.risk_level }}
+            </p>
+
+            {% if result.official_logo_path or
+                  result.candidate_logo_path %}
+                <div class="logo-grid">
+                    {% if result.official_logo_path %}
+                        <div class="logo-item">
+                            <strong>Official Brand Logo</strong>
+                            <img class="logo-preview"
+                                 src="{{ url_for('static',
+                                   filename=result.official_logo_path) }}"
+                                 alt="Official brand logo">
+                        </div>
+                    {% endif %}
+
+                    {% if result.candidate_logo_path %}
+                        <div class="logo-item">
+                            <strong>Candidate App Logo</strong>
+                            <img class="logo-preview"
+                                 src="{{ url_for('static',
+                                   filename=result.candidate_logo_path) }}"
+                                 alt="Candidate app logo">
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if result.logo_similarity is not none %}
+                <p>
+                    <strong>Visual Similarity:</strong>
+                    {{ result.logo_similarity }}%
+                </p>
+            {% endif %}
+
+            {% if result.logo_note %}
+                <div class="notice">{{ result.logo_note }}</div>
+            {% endif %}
+
+            <p><strong>Reason:</strong> {{ result.reason }}</p>
+            <p>
+                <strong>Recommended Action:</strong>
+                {{ result.recommended_action }}
+            </p>
+        </section>
+    {% endif %}
+</main>
+
+</body>
+</html>

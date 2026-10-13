@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Website Monitoring | BrandShield{% endblock %}
+{% block content %}
+<section class="page-heading">
+    <p class="eyebrow">WEB MONITORING</p>
+    <h1>Website Monitoring</h1>
+    <p>Compare a candidate domain with your registered brand identity.</p>
+</section>
+
+<section class="panel form-panel">
+    <form method="POST">
+        <label>Registered brand *</label>
+        <select name="brand_id" required>
+            <option value="">Select a registered brand</option>
+            {% for brand in brands %}
+            <option value="{{ brand.id }}">{{ brand.brand_name }}</option>
+            {% endfor %}
+        </select>
+        <label>Candidate website or domain *</label>
+        <input name="candidate_domain" placeholder="https://example.com" required>
+        <button class="button" type="submit">Check Domain</button>
+    </form>
+</section>
+
+{% if result %}
+<section class="panel">
+    <p class="eyebrow">ASSESSMENT RESULT</p>
+    <h2>{{ result.candidate_name }}</h2>
+    <p>Similarity score: <strong>{{ result.similarity_score }}%</strong></p>
+    <p>Risk level: <span class="risk {{ result.risk_level|lower }}">{{ result.risk_level }}</span></p>
+    <p>{{ result.reason }}</p>
+    <div class="action-box"><strong>Recommended action</strong><p>{{ result.recommended_action }}</p></div>
+    <p class="muted">This checks name similarity only. It does not verify ownership, page content, or malicious behavior.</p>
+</section>
+{% endif %}
+{% endblock %}

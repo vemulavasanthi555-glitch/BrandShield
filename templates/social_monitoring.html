@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Social Media Monitoring | BrandShield{% endblock %}
+{% block content %}
+<section class="page-heading">
+    <p class="eyebrow">SOCIAL MEDIA</p>
+    <h1>Social Media Monitoring</h1>
+    <p>Compare candidate account names with a registered brand.</p>
+</section>
+
+<section class="panel form-panel">
+    <form method="POST">
+        <label>Registered brand *</label>
+        <select name="brand_id" required>
+            <option value="">Select a registered brand</option>
+            {% for brand in brands %}
+            <option value="{{ brand.id }}" {% if selected_brand and selected_brand.id == brand.id %}selected{% endif %}>
+                {{ brand.brand_name }}
+            </option>
+            {% endfor %}
+        </select>
+        <button class="button" type="submit">Scan Multiple Sample Accounts</button>
+    </form>
+    <p class="muted">This prototype generates illustrative candidates. It does not search live social media platforms.</p>
+</section>
+
+{% if candidates %}
+<section class="panel">
+    <h2>Candidate accounts for {{ selected_brand.brand_name }}</h2>
+    <div class="result-grid">
+    {% for item in candidates %}
+        <article class="result-card">
+            <div class="result-top"><span>{{ item.platform }}</span><span class="risk {{ item.risk_level|lower }}">{{ item.risk_level }} risk</span></div>
+            <h3>{{ item.candidate_name }}</h3>
+            <p>Similarity: <strong>{{ item.similarity_score }}%</strong></p>
+            <p>{{ item.reason }}</p>
+            <div class="action-box"><strong>Recommended action</strong><p>{{ item.recommended_action }}</p></div>
+            <small class="muted">Illustrative candidate — not a verified account.</small>
+        </article>
+    {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}
